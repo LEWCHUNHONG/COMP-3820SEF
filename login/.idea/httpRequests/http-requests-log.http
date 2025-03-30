@@ -1,0 +1,32 @@
+POST http://localhost:8080/HelloSpringSecurity/Course/add
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=323CDBE29C98D76AE70E366EAEF1AF6E
+content-length: 0
+
+<> 2025-03-29T172538.403.json
+
+###
+
+POST http://localhost:8080/HelloSpringSecurity/Register
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+Cookie: JSESSIONID=323CDBE29C98D76AE70E366EAEF1AF6E
+content-length: 0
+
+<> 2025-03-29T172527.403.json
+
+###
+
+POST http://localhost:8080/HelloSpringSecurity/Register/submit
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+<> 2025-03-29T172517.403.json
+
+###
+
