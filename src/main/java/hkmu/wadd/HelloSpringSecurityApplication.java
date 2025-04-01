@@ -16,7 +16,11 @@ import java.util.Collections;
 public class HelloSpringSecurityApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(HelloSpringSecurityApplication.class, args);
+        try {
+            SpringApplication.run(HelloSpringSecurityApplication.class, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Bean

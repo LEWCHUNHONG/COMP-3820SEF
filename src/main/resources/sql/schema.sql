@@ -7,12 +7,10 @@ CREATE TABLE IF NOT EXISTS guestbook (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS course (
-                                         id BIGINT GENERATED ALWAYS AS IDENTITY,
-                                         name VARCHAR(255),
-                                         PRIMARY KEY (id)
-);
 
+DROP TABLE IF EXISTS poll;
+DROP TABLE IF EXISTS coursecomment;
+DROP TABLE IF EXISTS register;
 
 CREATE TABLE IF NOT EXISTS poll (
                                     id BIGINT GENERATED ALWAYS AS IDENTITY,
@@ -28,7 +26,7 @@ CREATE TABLE IF NOT EXISTS coursecomment (
                                     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS registerdata (
+CREATE TABLE IF NOT EXISTS register (
                                         id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                         username VARCHAR(255),
                                         password VARCHAR(255),
@@ -37,6 +35,7 @@ CREATE TABLE IF NOT EXISTS registerdata (
                                         phone VARCHAR(8),
                                         role VARCHAR(10)
 );
+
 
 
 

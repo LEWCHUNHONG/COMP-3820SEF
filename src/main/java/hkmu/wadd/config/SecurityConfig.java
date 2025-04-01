@@ -39,8 +39,8 @@ public class SecurityConfig {
             throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/Course/add", "/Course/edit/**", "/Course/delete/**").hasRole("ADMIN")
-                        .requestMatchers("/index", "/Course", "/Course/add", "/Course/addCourseComment").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/Course/add", "/Course/edit/**", "/Course/delete/**").permitAll()
+                        .requestMatchers("/index", "/Course", "/Course/add", "/Course/addCourseComment").permitAll()
                         .requestMatchers("/login", "/Register").permitAll()
                         .anyRequest().permitAll()
                 )

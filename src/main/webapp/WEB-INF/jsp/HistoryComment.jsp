@@ -56,33 +56,22 @@
 </head>
 <body>
 <div class="poll-container">
-    <h1>Poll</h1>
-
-    <c:if test="${fn:length(polles) == 0}">
-        <p>There is no Poll yet.</p>
+    <h1>History Comment</h1>
+    <c:if test="${fn:length(coursecomments) == 0}">
+        <p>There are no deleted comment yet.</p>
     </c:if>
-    <c:if test="${fn:length(polles) > 0}">
-        <ul>
-            <c:forEach var="poll" items="${polles}">
-                <li class="poll-item">
-                    <strong>Question <c:url value="/Poll/${poll.id}" var="myURL"/></strong>
-                    [<a href="${myURL}">${poll.id}</a>]
-                    <c:url value="/Poll/edit/${poll.id}" var="myURL"/>
-                    [<a href="${myURL}">Edit</a>]
-                    <c:url value="/Poll/delete/${poll.id}" var="myURL"/>
-                    [<a href="${myURL}">Delete</a>]
-                </li>
-            </c:forEach>
-        </ul>
+    <c:if test="${fn:length(coursecomments) > 0}">
+    <ul>
+        <c:forEach var="comment" items="${coursecomments}">
+            <li>
+                <strong>${comment.name}:</strong> ${comment.message}
+                <c:if test="${comment.deleted}">
+                    <span style="color:red;">(Deleted)</span>
+                </c:if>
+            </li>
+        </c:forEach>
+    </ul>
     </c:if>
-
-    <div class="add-poll">
-        <p><a href="<c:url value='/Poll/add' />">Add Poll</a></p>
-    </div>
-
-    <div class="back-index">
-        <p><a href="<c:url value='/index' />">Back</a></p>
-    </div>
 </div>
 </body>
 </html>

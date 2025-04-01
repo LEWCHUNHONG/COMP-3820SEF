@@ -17,6 +17,7 @@
     <input name="Register" type="submit" value="register" /><br />
 </form>
 
+
 <p><a href="<c:url value="/Register/add" />">Add Register</a></p>
 
 

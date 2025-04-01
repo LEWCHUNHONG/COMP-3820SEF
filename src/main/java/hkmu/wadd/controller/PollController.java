@@ -2,7 +2,6 @@ package hkmu.wadd.controller;
 
 
 import hkmu.wadd.dao.PollEntryRepository;
-import hkmu.wadd.model.CourseEntry;
 import hkmu.wadd.model.PollEntry;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
@@ -19,11 +18,21 @@ public class PollController {
     @Resource
     private PollEntryRepository peRepo;
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public String index(ModelMap model) {
         model.addAttribute("polles", peRepo.findAll());
         return "Poll";
     }
+
+
+    @GetMapping("/{id}")
+    public String showPollInfo(@PathVariable("id") long entryId, ModelMap model) {
+        PollEntry POLLINFO = peRepo.findById(entryId).orElse(null);
+        model.addAttribute("pollinfo", POLLINFO);
+        return "PollInfo";
+    }
+
+
 
     @GetMapping("/add")
     public ModelAndView addPollForm() {
@@ -33,8 +42,9 @@ public class PollController {
     @PostMapping("/add")
     public View addPollHandle(@ModelAttribute("polles") PollEntry pEntry) {
         peRepo.save(pEntry);
-        return new RedirectView(".");
+        return new RedirectView("..");
     }
+
 
     @GetMapping("/edit/{id}")
     public String editPollForm(@PathVariable("id") long entryId, ModelMap model) {
@@ -51,7 +61,7 @@ public class PollController {
         if (pEntry.getId() == entryId) {
             peRepo.save(pEntry);
         }
-        return "redirect:.."; // Another way to redirect in Spring MVC
+        return "redirect:/Poll";
     }
 
     @GetMapping("/delete/{id}")
@@ -61,7 +71,7 @@ public class PollController {
             return "redirect:/Poll";
         }
         peRepo.deleteById(entryId);
-        return "redirect:/Course";
+        return "redirect:/Poll";
     }
 
 }

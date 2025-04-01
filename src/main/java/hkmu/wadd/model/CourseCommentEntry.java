@@ -12,6 +12,7 @@ public class CourseCommentEntry {
     private Long id;
     private String name;
     private String message  ;
+    //private boolean deleted;
 
     public CourseCommentEntry() {
     }
@@ -40,12 +41,12 @@ public class CourseCommentEntry {
         this.message = message;
     }
 
-    @Override
-    public String toString() {
-        return "CourseCommentEntry{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", message='" + message + '\'' +
-                '}';
-    }
+//    public boolean isDeleted() {
+//        return deleted;
+//    }
+//
+//    public void setDeleted(boolean deleted) {
+//        this.deleted = deleted;
+//    }
+
 }

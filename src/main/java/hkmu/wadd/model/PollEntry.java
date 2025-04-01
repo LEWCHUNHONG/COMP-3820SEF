@@ -1,20 +1,15 @@
 package hkmu.wadd.model;
 
-
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "poll")
 public class PollEntry {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String question;
     private String choices;
-
-    public PollEntry() {
-    }
 
     public Long getId() {
         return id;
@@ -39,6 +34,10 @@ public class PollEntry {
     public void setChoices(String choices) {
         this.choices = choices;
     }
+
+    public PollEntry() {
+    }
+
 
     @Override
     public String toString() {

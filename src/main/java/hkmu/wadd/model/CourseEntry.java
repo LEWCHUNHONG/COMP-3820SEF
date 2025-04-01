@@ -1,25 +1,23 @@
 package hkmu.wadd.model;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "course")
+
 public class CourseEntry {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private String name;
+    private String comment;
+    private Map<String, Attachment> attachments = new ConcurrentHashMap<>();
 
 
-    public CourseEntry() {
-    }
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -31,11 +29,27 @@ public class CourseEntry {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "CourseEntry{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Attachment getAttachment(String name) {
+        return this.attachments.get(name);
+    }
+
+    public Collection<Attachment> getAttachments() {
+        return this.attachments.values();
+    }
+
+    public void addAttachment(Attachment attachment) {
+        this.attachments.put(attachment.getId(), attachment);
+    }
+
+    public int getNumberOfAttachments() {
+        return this.attachments.size();
     }
 }
