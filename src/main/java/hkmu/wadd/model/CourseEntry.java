@@ -1,18 +1,15 @@
 package hkmu.wadd.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-
 
 public class CourseEntry {
     private long id;
     private String name;
     private String comment;
-    private Map<String, Attachment> attachments = new ConcurrentHashMap<>();
-
-
+    private final Map<String, Attachment> attachments = new ConcurrentHashMap<>();
     public long getId() {
         return id;
     }
@@ -37,19 +34,42 @@ public class CourseEntry {
         this.comment = comment;
     }
 
-    public Attachment getAttachment(String name) {
-        return this.attachments.get(name);
+    // Attachment management methods
+    public Attachment getAttachment(String attachmentId) {
+        return attachments.get(attachmentId);
     }
 
     public Collection<Attachment> getAttachments() {
-        return this.attachments.values();
+        return Collections.unmodifiableCollection(attachments.values());
     }
 
     public void addAttachment(Attachment attachment) {
-        this.attachments.put(attachment.getId(), attachment);
+        if (attachment != null && attachment.getId() != null) {
+            attachments.put(attachment.getId(), attachment);
+        }
+    }
+
+    public boolean removeAttachment(String attachmentId) {
+        return attachments.remove(attachmentId) != null;
+    }
+
+    public void clearAttachments() {
+        attachments.clear();
+    }
+
+    public void setAttachments(Collection<Attachment> newAttachments) {
+        clearAttachments();
+        if (newAttachments != null) {
+            newAttachments.forEach(this::addAttachment);
+        }
     }
 
     public int getNumberOfAttachments() {
-        return this.attachments.size();
+        return attachments.size();
     }
+
+    public Map<String, Attachment> getAttachmentsMap() {
+        return new ConcurrentHashMap<>(attachments);
+    }
+
 }

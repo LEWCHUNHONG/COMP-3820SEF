@@ -19,8 +19,12 @@
     </c:otherwise>
 </c:choose>
 
-<p><a href="<c:url value="/Course/add" />">Create a Course</a></p><br/><br/>
-<p><a href="<c:url value="/index" />">Back</a></p>
+<security:authorize access="hasRole('ADMIN')">
+    <p><a href="<c:url value="/Course/add" />">Create a Course</a></p><br/>
+</security:authorize>
+
+
+<p><a href="${pageContext.request.contextPath}/index">Back</a></p>
 
 </body>
 </html>

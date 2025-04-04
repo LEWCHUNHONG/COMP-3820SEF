@@ -4,6 +4,9 @@ import hkmu.wadd.dao.*;
 import hkmu.wadd.model.*;
 import hkmu.wadd.view.DownloadingView;
 import jakarta.annotation.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +17,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.apache.commons.lang3.RandomStringUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -28,21 +30,21 @@ public class CourseController {
     @Resource
     private CourseCommentEntryRepository cceRep;
 
+    @Resource
+    private UserManagementService userManagementService;
+
+
     @PersistenceContext
     private EntityManager entityManager;
 
-
     private volatile long COURSE_ID_SEQUENCE = 1;
     private Map<Long, CourseEntry> CourseNotesDatabase = new ConcurrentHashMap<>();
-
 
     @GetMapping({"", "/"})
     public String index(ModelMap model) {
         model.addAttribute("CourseNotesDatabase", CourseNotesDatabase);
         return "Course";
     }
-
-
 
     @GetMapping("/add")
     public ModelAndView addCourseForm() {
@@ -85,7 +87,6 @@ public class CourseController {
         course.setId(this.getNextTicketId());
         course.setName(form.getName());
         course.setComment(form.getComment());
-
         for (MultipartFile filePart : form.getAttachments()) {
             Attachment attachment = new Attachment();
             attachment.setId(RandomStringUtils.randomAlphanumeric(8));
@@ -104,10 +105,6 @@ public class CourseController {
         return this.COURSE_ID_SEQUENCE++;
     }
 
-
-
-
-
     @GetMapping("/view/{courseId}")
     public String view(@PathVariable("courseId") long courseId,
                        ModelMap model) {
@@ -115,15 +112,30 @@ public class CourseController {
         if (course == null) {
             return "redirect:/Course";
         }
+
+        // Get current authenticated username
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = auth.getName();
+
+        // Get full user details from your UserManagementService
+        CommentUser currentUser = null;
+        try {
+            currentUser = userManagementService.getCommentUsers().stream()
+                    .filter(u -> u.getUsername().equals(currentUsername))
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            // Handle case when user not found
+        }
+
         model.addAttribute("courseId", courseId);
         model.addAttribute("course", course);
         model.addAttribute("coursecomments", cceRep.findAll());
+        model.addAttribute("currentUser", currentUser); // Add current user object
+        model.addAttribute("currentUsername", currentUsername); // Add username as well
 
         return "CourseInfo";
     }
-
-
-
 
 
 
@@ -141,42 +153,64 @@ public class CourseController {
         return new RedirectView("/Course", true);
     }
 
-
-
-
-
     @GetMapping("/view/edit/{courseId}")
-    public String editCourseMaterialForm(@PathVariable("courseId") long courseId,
-                       ModelMap model) {
-        CourseEntry courseEdit = this.CourseNotesDatabase.get(courseId);
-        if (courseEdit == null) {
-            return "redirect:/Course";
+    public ModelAndView editCourseForm(@PathVariable("courseId") long courseId) {
+        CourseEntry course = this.CourseNotesDatabase.get(courseId);
+        if (course == null) {
+            return new ModelAndView("redirect:/Course");
         }
-        model.addAttribute("editcourse", courseEdit);
-        return "EditCourse";
+        Form form = new Form();
+        form.setName(course.getName());
+        form.setComment(course.getComment());
+        ModelAndView modelAndView = new ModelAndView("EditCourse");
+        modelAndView.addObject("courseForm", form);
+        modelAndView.addObject("courseId", courseId);
+        modelAndView.addObject("course", course);
+        return modelAndView;
     }
-
 
     @PostMapping("/view/edit/{courseId}")
-    public String editCourseMaterialHandle(@PathVariable("courseId") long courseId,
-                                 @ModelAttribute("editcourse") CourseEntry courseEdit) {
-
-        CourseNotesDatabase.put(courseId, courseEdit);
-        return "redirect:/Course";
+    public String handleEditSubmit(@PathVariable("courseId") long courseId,
+                                   @ModelAttribute("courseForm") Form form,
+                                   ModelMap model) throws IOException {
+        CourseEntry course = this.CourseNotesDatabase.get(courseId);
+        if (course == null) {
+            return "redirect:/Course";
+        }
+        course.setName(form.getName());
+        course.setComment(form.getComment());
+        if (form.getAttachments() != null) {
+            for (MultipartFile filePart : form.getAttachments()) {
+                if (!filePart.isEmpty()) {
+                    Attachment attachment = new Attachment();
+                    attachment.setId(RandomStringUtils.randomAlphanumeric(8));
+                    attachment.setName(filePart.getOriginalFilename());
+                    attachment.setMimeContentType(filePart.getContentType());
+                    attachment.setContents(filePart.getBytes());
+                    course.addAttachment(attachment);
+                }
+            }
+        }
+        this.CourseNotesDatabase.put(courseId, course);
+        return "redirect:/Course/view/" + courseId;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    @PostMapping("/{courseId}/deleteAttachment/{attachmentId}")
+    public ResponseEntity<String> deleteAttachment(
+            @PathVariable("courseId") long courseId,
+            @PathVariable("attachmentId") String attachmentId) {
+        CourseEntry course = this.CourseNotesDatabase.get(courseId);
+        if (course == null) {
+            return ResponseEntity.notFound().build();
+        }
+        boolean removed = course.removeAttachment(attachmentId);
+        if (removed) {
+            this.CourseNotesDatabase.put(courseId, course);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @GetMapping("/view/delete/{courseId}")
     public String deleteCourseEntry(@PathVariable("courseId") long courseId) {
@@ -187,5 +221,4 @@ public class CourseController {
         CourseNotesDatabase.remove(courseId);
         return "redirect:/Course";
     }
-
 }

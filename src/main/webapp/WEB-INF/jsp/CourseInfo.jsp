@@ -1,51 +1,113 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Course Material</title>
+    <title>Course Information</title>
+    <style>
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .delete-btn {
+            margin-left: 10px;
+            color: red;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<h2>Course ID #${courseId}: </h2>
-<i>Lecture Title - <c:out value="${course.name}"/></i><br/><br/>
-    Lecture Notes :
-    <c:forEach items="${course.attachments}" var="attachment" varStatus="status">
-        <a href="<c:url value="/Course/${courseId}/attachment/${attachment.id}" />">
-            <c:out value="${attachment.name}"/></a>
-    </c:forEach><br/><br/>
-    Information :
-    <c:out value="${course.comment}"/><br/><br/>
-
-<br/>
+<h1>${course.name}</h1>
+<p>${course.comment}</p>
+<security:authorize access="hasRole('ADMIN')">
+    <a href="${pageContext.request.contextPath}/Course/view/edit/${courseId}">Edit Course</a>
+</security:authorize>
 
 
-<c:if test="${fn:length(coursecomments) == 0}">
-    <p>There are no comments yet.</p>
-</c:if>
+<h2>Course Materials </h2>
+<ul>
+    <c:forEach items="${course.attachments}" var="attachment">
+        <li class="attachment-item">
+            <a href="${pageContext.request.contextPath}/Course/${courseId}/attachment/${attachment.id}">
+                    ${attachment.name}
+            </a>
+            <span class="delete-btn"
+                  onclick="deleteAttachment('${courseId}', '${attachment.id}')">
+                        [Delete]
+                    </span>
+        </li>
+    </c:forEach>
+</ul>
+<h2>Comments</h2>
+<div class="comments-section">
+    <c:if test="${empty coursecomments}">
+        <p>There are no comments yet.</p>
+    </c:if>
 
-<c:if test="${fn:length(coursecomments) > 0}">
-    <ul>
-        <c:forEach var="coursecomment" items="${coursecomments}">
-            <li class="coursecomment-item">
-                <strong>Comment: <c:out value="${coursecomment.message}"/></strong><br/>
-                <strong>User Name: <c:out value="${coursecomment.name}"/></strong>
-                <c:url value="/Comment/delete/${coursecomment.id}" var="myURL"/>
-                [<a href="${myURL}">Delete</a>]
-            </li>
+    <c:if test="${not empty coursecomments}">
+        <c:forEach var="comment" items="${coursecomments}">
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span class="user-badge ${comment.name eq currentUsername ? 'current-user' : ''}">
+                        <c:choose>
+                            <c:when test="${comment.name eq currentUsername}">
+                                You
+                            </c:when>
+                            <c:otherwise>
+                                <c:out value="${comment.name}"/>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                    <c:if test="${not empty currentUser and currentUser.username ne null}">
+                        <small>(<c:out value="${currentUser.username}"/>)</small>
+                    </c:if>
+                </div>
+                <p><c:out value="${comment.message}"/></p>
+
+                <security:authorize access="hasRole('ADMIN')">
+                     <c:url value="/Comment/delete/${comment.id}" var="deleteUrl"/>
+                            [<a href="${deleteUrl}" onclick="return confirm('Are you sure?')">Delete</a>]
+                </security:authorize>
+            </div>
         </c:forEach>
-    </ul>
-</c:if>
+    </c:if>
+</div>
 
 <br/>
 
 <div class="add-comment">
     <p><a href="<c:url value='/Comment/add' />">Add Comment</a></p>
 </div>
-
+<br/>
+<security:authorize access="hasRole('ADMIN')">
+    <c:url value="/Course/view/delete/${courseId}" var="myURL"/>
+    [<a href="${myURL}">Delete</a>]<br/>
+</security:authorize>
 <br/>
 
-<c:url value="/Course/view/delete/${courseId}" var="myURL"/>
-[<a href="${myURL}">Delete</a>]<br/>
+<a href="${pageContext.request.contextPath}/Course">Back to Courses</a>
 
 
-[<a href="<c:url value="/Course" />">Return to Course Material]</a>
+<script>
+    function deleteAttachment(courseId, attachmentId) {
+        if (confirm('Are you sure you want to delete this attachment?')) {
+            fetch('${pageContext.request.contextPath}/Course/${courseId}/deleteAttachment/' + attachmentId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: '_csrf=${_csrf.token}'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // Refresh the page after deletion
+                    } else {
+                        alert('Failed to delete attachment');
+                    }
+                });
+        }
+    }
+</script>
 </body>
 </html>

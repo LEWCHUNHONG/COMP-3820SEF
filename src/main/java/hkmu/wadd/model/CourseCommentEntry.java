@@ -12,8 +12,6 @@ public class CourseCommentEntry {
     private Long id;
     private String name;
     private String message  ;
-    //private boolean deleted;
-
     public CourseCommentEntry() {
     }
 
@@ -40,13 +38,5 @@ public class CourseCommentEntry {
     public void setMessage(String message) {
         this.message = message;
     }
-
-//    public boolean isDeleted() {
-//        return deleted;
-//    }
-//
-//    public void setDeleted(boolean deleted) {
-//        this.deleted = deleted;
-//    }
 
 }

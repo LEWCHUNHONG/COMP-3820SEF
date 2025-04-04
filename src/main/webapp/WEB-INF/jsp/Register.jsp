@@ -1,29 +1,41 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Register</title>
 </head>
 <body>
-<h1>Register</h1>
-<form action="Register" method="POST">
-    Username: <input type="text" name="username"><br />
-    Password: <input type="password" name="password" /><br />
-    Full Name: <input type="text" name="fullname"><br />
+<div class="container">
+    <h2>Register</h2>
+    <form:form method="POST" action="/CSApp/Register" modelAttribute="register">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <form:input path="username" id="username" required="true"/>
+            <form:errors path="username" cssClass="error"/>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <form:password path="password" id="password" required="true"/>
+            <form:errors path="password" cssClass="error"/>
+        </div>
+        <div class="form-group">
+            <label for="fullname">Full Name:</label>
+            <form:input path="fullname" id="fullname" required="true"/>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <form:input path="email" type="email" id="email" required="true"/>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <form:input path="phone" id="phone" required="true"/>
+        </div>
 
-    Email: <input type="text" name="email"><br />
-    Phone: <input type="text" name="phone"><br />
-    User Type: <input type="text" name="role"><br />
-
-    <input name="Register" type="submit" value="register" /><br />
-</form>
-
-
-<p><a href="<c:url value="/Register/add" />">Add Register</a></p>
-
-
-</body>
-</html>
-
-
+        <form:hidden path="roles" value="ROLE_USER"/>
+        <button type="submit">Register</button>
+    </form:form>
+</div>
 </body>
 </html>

@@ -1,12 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poll List</title>
+    <title>Deleted Polls</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -62,41 +61,43 @@
 </head>
 <body>
 <div class="container">
-    <h1>Poll List</h1>
-
+    <h1>Deleted Polls History</h1>
     <c:choose>
-        <c:when test="${empty polles || fn:length(polles) == 0}">
-            <p>There is no Poll yet.</p>
+        <c:when test="${empty deletedPolls}">
+            <p>No deleted polls found</p>
         </c:when>
         <c:otherwise>
-            <c:forEach var="poll" items="${polles}">
-                <div class="poll-item">
-                    Question: <c:url value="/Poll/${poll.id}" var="myURL"/>
-                    <a href="${myURL}">${poll.question}</a>
-                    <security:authorize access="hasRole('ADMIN')">
-                        <div class="poll-actions">
-                            <a href="${pageContext.request.contextPath}/Poll/edit/${poll.id}" class="edit-btn">Edit</a>
-                            <a href="${pageContext.request.contextPath}/Poll/delete/${poll.id}"
-                               class="delete-btn"
-                               onclick="return confirm('Are you sure you want to delete this poll?')">Delete</a>
-                        </div>
-                    </security:authorize>
-                </div>
-            </c:forEach>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Question</th>
+                    <th>Deleted At</th>
+                    <security:authorize access="hasRole('ADMIN')"><th>Actions</th></security:authorize>
+                </tr>
+                <c:forEach items="${deletedPolls}" var="poll">
+                    <tr>
+                        <td>${poll.id}</td>
+                        <td>${poll.question}</td>
+                        <td>${poll.deletedAt}</td>
+                        <td><security:authorize access="hasRole('ADMIN')">
+                            <a href="${pageContext.request.contextPath}/PollHistory/restore/${poll.id}">Restore</a> |
+                            <a href="${pageContext.request.contextPath}/PollHistory/permanent-delete/${poll.id}"
+                               onclick="return confirm('Permanently delete this poll?')">
+                                Delete Permanently
+                            </a>
+                            </security:authorize>
+                        </td>
+
+                    </tr>
+                    <br/>
+                </c:forEach>
+            </table>
         </c:otherwise>
     </c:choose>
-    <security:authorize access="hasRole('ADMIN')">
-        <div class="add-poll">
-            <a href="${pageContext.request.contextPath}/Poll/add">Add New Poll</a>
-        </div>
-    </security:authorize>
-        <div class="History-poll">
-            <p><a href="<c:url value="/PollHistory" />">History Polls</a></p>
-        </div>
-    <div class="back-index">
-        <p><a href="<c:url value='/index' />">Back</a></p>
-    </div>
 
+    <div class="Back-active-poll">
+        <a href="${pageContext.request.contextPath}/Poll">Back to Active Polls</a>
+    </div>
 
 </div>
 </body>

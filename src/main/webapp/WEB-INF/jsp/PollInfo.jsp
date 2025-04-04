@@ -1,77 +1,85 @@
-
-
-
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poll</title>
+    <title>Poll Details</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
         .poll-container {
             max-width: 600px;
             margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .poll-item {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
+        .poll-question {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
         }
-        .poll-item:last-child {
-            border-bottom: none;
+        .option-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
         }
-        .poll-item a {
-            text-decoration: none;
-            color: #007bff;
+        .vote-count {
+            margin-left: auto;
+            color: #7f8c8d;
         }
-        .poll-item a:hover {
-            text-decoration: underline;
-        }
-        .add-poll {
-            text-align: center;
+        .vote-btn {
+            background: #3498db;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             margin-top: 20px;
         }
-        .add-poll a {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .add-poll a:hover {
-            background-color: #0056b3;
+        .success-message {
+            color: #27ae60;
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
 <div class="poll-container">
-    <h1>Poll Information</h1>
+    <!-- Display Poll Question -->
+    <h1 class="poll-question">${poll.question}</h1>
 
+    <!-- Success Message (if present) -->
+    <c:if test="${not empty successMessage}">
+        <div class="success-message">${successMessage}</div>
+    </c:if>
 
-    <ul>
-        <strong>Question: ${pollinfo.question}</strong> <br />
-        <strong>Choices: ${pollinfo.choices}</strong> <br />
+    <!-- Voting Form -->
+    <form action="${pageContext.request.contextPath}/Poll/${poll.id}/vote" method="post">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-    </ul>
+        <div class="options-list">
+            <c:forEach items="${poll.optionsWithVotes}" var="option">
+                <div class="option-item">
+                    <input type="radio"
+                           id="opt_${option.key}"
+                           name="selectedOption"
+                           value="${option.key}"
+                           required>
+                    <label for="opt_${option.key}">${option.key}</label>
+                    <span class="vote-count">${option.value} votes</span>
+                </div>
+            </c:forEach>
+        </div>
 
-
-    <div class="back-index">
-        <p><a href="<c:url value='/Poll' />">Back</a></p>
-    </div>
+        <button type="submit" class="vote-btn">Submit Vote</button>
+    </form>
+    <br/>
+    <br/>
+    <a href="${pageContext.request.contextPath}/Poll">Back to Poll List</a>
 </div>
 </body>
 </html>
