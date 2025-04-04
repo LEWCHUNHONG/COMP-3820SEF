@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
-
 @Controller
 @RequestMapping("/User")
 public class UserManagementController {
@@ -40,20 +39,56 @@ public class UserManagementController {
         private String email;
         private String phone;
         private String[] roles;
-        private List<UserRole> userRoles;  // Add this new field
+        private List<UserRole> userRoles;
 
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-        public String getFullname() { return fullname; }
-        public void setFullname(String fullname) { this.fullname = fullname; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getPhone() { return phone; }
-        public void setPhone(String phone) { this.phone = phone; }
-        public String[] getRoles() { return roles; }
-        public void setRoles(String[] roles) { this.roles = roles; }
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getFullname() {
+            return fullname;
+        }
+
+        public void setFullname(String fullname) {
+            this.fullname = fullname;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String[] getRoles() {
+            return roles;
+        }
+
+        public void setRoles(String[] roles) {
+            this.roles = roles;
+        }
+
         public List<UserRole> getUserRoles() {
             return userRoles;
         }
@@ -69,14 +104,37 @@ public class UserManagementController {
         private String email;
         private String phone;
 
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-        public String getFullname() { return fullname; }
-        public void setFullname(String fullname) { this.fullname = fullname; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getPhone() { return phone; }
-        public void setPhone(String phone) { this.phone = phone; }
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getFullname() {
+            return fullname;
+        }
+
+        public void setFullname(String fullname) {
+            this.fullname = fullname;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
     }
 
     @GetMapping("/edit/{username}")
@@ -119,35 +177,26 @@ public class UserManagementController {
                 form.getFullname(),
                 form.getEmail(),
                 form.getPhone(),
-                form.getRoles()
-        );
+                form.getRoles());
         return "redirect:/User/list";
     }
-
-
-
 
     @GetMapping("/profile/edit")
     public ModelAndView showProfileEditForm() {
         String username = getCurrentUsername();
         CommentUser user = umService.getUserByUsername(username);
-
         if (user == null) {
             return new ModelAndView("redirect:/login");
         }
-
-        // Create form with editable fields only
         ModelAndView mav = new ModelAndView("EditUserProfile");
-        mav.addObject("username", user.getUsername()); // show but not editable
+        mav.addObject("username", user.getUsername());
         mav.addObject("password", user.getPassword().replace("{noop}", ""));
         mav.addObject("fullname", user.getFullname());
         mav.addObject("email", user.getEmail());
         mav.addObject("phone", user.getPhone());
-
         return mav;
     }
 
-    // Process profile update
     @PostMapping("/profile/update")
     public String updateProfile(
             @RequestParam String password,
@@ -160,13 +209,6 @@ public class UserManagementController {
 
         return "redirect:/User/profile/edit?success";
     }
-
-
-
-
-
-
-
 
     @GetMapping("/delete/{username}")
     public String deleteUser(@PathVariable("username") String username) {

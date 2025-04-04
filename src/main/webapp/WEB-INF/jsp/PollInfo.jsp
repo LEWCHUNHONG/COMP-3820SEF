@@ -49,15 +49,10 @@
 </head>
 <body>
 <div class="poll-container">
-    <!-- Display Poll Question -->
     <h1 class="poll-question">${poll.question}</h1>
-
-    <!-- Success Message (if present) -->
     <c:if test="${not empty successMessage}">
         <div class="success-message">${successMessage}</div>
     </c:if>
-
-    <!-- Voting Form -->
     <form action="${pageContext.request.contextPath}/Poll/${poll.id}/vote" method="post">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
@@ -74,7 +69,6 @@
                 </div>
             </c:forEach>
         </div>
-
         <button type="submit" class="vote-btn">Submit Vote</button>
     </form>
     <br/>

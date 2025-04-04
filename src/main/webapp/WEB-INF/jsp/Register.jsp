@@ -32,7 +32,6 @@
             <label for="phone">Phone:</label>
             <form:input path="phone" id="phone" required="true"/>
         </div>
-
         <form:hidden path="roles" value="ROLE_USER"/>
         <button type="submit">Register</button>
     </form:form>

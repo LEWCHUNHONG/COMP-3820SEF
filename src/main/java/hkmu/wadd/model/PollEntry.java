@@ -13,7 +13,6 @@ public class PollEntry {
 
     private String question;
 
-    // Store choices and votes as JSON format: {"choice1":0,"choice2":0}
     @Column(columnDefinition = "TEXT")
     private String choices;
 
@@ -31,7 +30,6 @@ public class PollEntry {
     @Column(name = "updated_at")
     private Date updatedAt = new Date();
 
-    // Lifecycle hooks
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
@@ -43,23 +41,21 @@ public class PollEntry {
         updatedAt = new Date();
     }
 
-    // Voting methods
     public Map<String, Integer> getOptionsWithVotes() {
         if (choices == null || choices.trim().isEmpty()) {
             return new LinkedHashMap<>();
         }
         try {
             return new com.fasterxml.jackson.databind.ObjectMapper()
-                    .readValue(choices, new com.fasterxml.jackson.core.type.TypeReference<Map<String, Integer>>(){});
+                    .readValue(choices, new com.fasterxml.jackson.core.type.TypeReference<Map<String, Integer>>() {
+                    });
         } catch (Exception e) {
-            // Fallback to old format if JSON parsing fails
             return Arrays.stream(choices.split(","))
                     .collect(Collectors.toMap(
                             option -> option.split(":")[0],
                             option -> Integer.parseInt(option.split(":")[1]),
                             (oldValue, newValue) -> oldValue,
-                            LinkedHashMap::new
-                    ));
+                            LinkedHashMap::new));
         }
     }
 
@@ -70,7 +66,6 @@ public class PollEntry {
             this.choices = new com.fasterxml.jackson.databind.ObjectMapper()
                     .writeValueAsString(optionsMap);
         } catch (Exception e) {
-            // Fallback to old format
             this.choices = options.stream()
                     .map(option -> option + ":0")
                     .collect(Collectors.joining(","));
@@ -81,7 +76,6 @@ public class PollEntry {
         Map<String, Integer> optionsMap = getOptionsWithVotes();
         if (optionsMap.containsKey(option)) {
             optionsMap.put(option, optionsMap.get(option) + 1);
-            // Update the choices string
             this.choices = optionsMap.entrySet().stream()
                     .map(e -> e.getKey() + ":" + e.getValue())
                     .collect(Collectors.joining(","));
@@ -102,23 +96,57 @@ public class PollEntry {
         this.deletedAt = null;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getQuestion() { return question; }
-    public void setQuestion(String question) { this.question = question; }
-    public String getChoices() { return choices; }
-    public void setChoices(String choices) { this.choices = choices; }
-    public boolean isDeleted() { return deleted; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getChoices() {
+        return choices;
+    }
+
+    public void setChoices(String choices) {
+        this.choices = choices;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
         this.deletedAt = deleted ? new Date() : null;
     }
-    public Date getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(Date deletedAt) { this.deletedAt = deletedAt; }
-    public Date getCreatedAt() { return createdAt; }
-    public Date getUpdatedAt() { return updatedAt; }
 
-    public PollEntry() {}
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public PollEntry() {
+    }
 
     public PollEntry(String question, List<String> options) {
         this.question = question;

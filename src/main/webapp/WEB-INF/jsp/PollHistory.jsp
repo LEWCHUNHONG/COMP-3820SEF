@@ -94,11 +94,9 @@
             </table>
         </c:otherwise>
     </c:choose>
-
     <div class="Back-active-poll">
         <a href="${pageContext.request.contextPath}/Poll">Back to Active Polls</a>
     </div>
-
 </div>
 </body>
 </html>

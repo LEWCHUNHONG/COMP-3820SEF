@@ -10,6 +10,7 @@ public class CourseEntry {
     private String name;
     private String comment;
     private final Map<String, Attachment> attachments = new ConcurrentHashMap<>();
+
     public long getId() {
         return id;
     }
@@ -34,7 +35,6 @@ public class CourseEntry {
         this.comment = comment;
     }
 
-    // Attachment management methods
     public Attachment getAttachment(String attachmentId) {
         return attachments.get(attachmentId);
     }

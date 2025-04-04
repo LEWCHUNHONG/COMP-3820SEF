@@ -101,7 +101,7 @@
             })
                 .then(response => {
                     if (response.ok) {
-                        location.reload(); // Refresh the page after deletion
+                        location.reload();
                     } else {
                         alert('Failed to delete attachment');
                     }

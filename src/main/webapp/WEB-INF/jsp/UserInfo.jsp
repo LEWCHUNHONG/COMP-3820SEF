@@ -133,9 +133,7 @@
     </c:forEach>
     </tbody>
 </table>
-
 <a href="${pageContext.request.contextPath}/index" class="back-btn">Back to Home</a>
-
 <script>
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {

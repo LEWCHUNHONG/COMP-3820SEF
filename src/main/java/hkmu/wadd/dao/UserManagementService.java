@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
 @Service
 public class UserManagementService {
 
@@ -34,45 +35,35 @@ public class UserManagementService {
 
     @Transactional
     public void createCommentUser(String username,
-                                  String password,
-                                  String fullname,
-                                  String email,
-                                  String phone,
-                                  String[] roles) {
+            String password,
+            String fullname,
+            String email,
+            String phone,
+            String[] roles) {
         CommentUser user = new CommentUser(username, password, fullname, email, phone, roles);
         cuRepo.save(user);
     }
 
     @Transactional
     public void updateUser(String originalUsername,
-                           String newUsername,
-                           String password,
-                           String fullname,
-                           String email,
-                           String phone,
-                           String[] roles) {
+            String newUsername,
+            String password,
+            String fullname,
+            String email,
+            String phone,
+            String[] roles) {
 
         CommentUser user = cuRepo.findById(originalUsername).orElseThrow(
-                () -> new UsernameNotFoundException("User not found")
-        );
-
-        // Update basic fields
+                () -> new UsernameNotFoundException("User not found"));
         user.setUsername(newUsername);
-        user.setPassword("{noop}" + password); // Add password encoding prefix
-        user.setFullname(fullname);
+        user.setPassword("{noop}" + password);
         user.setEmail(email);
         user.setPhone(phone);
-
-        // Update roles
         user.getRoles().clear();
         for (String role : roles) {
             user.getRoles().add(new UserRole(user, role));
         }
-
-        // Save changes
         cuRepo.save(user);
-
-        // If username changed, we need to update the reference
         if (!originalUsername.equals(newUsername)) {
             cuRepo.deleteById(originalUsername);
             cuRepo.save(user);

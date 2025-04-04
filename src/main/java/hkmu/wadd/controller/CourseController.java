@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 @Controller
 @RequestMapping("/Course")
 public class CourseController {
@@ -33,14 +32,13 @@ public class CourseController {
     @Resource
     private UserManagementService userManagementService;
 
-
     @PersistenceContext
     private EntityManager entityManager;
 
     private volatile long COURSE_ID_SEQUENCE = 1;
     private Map<Long, CourseEntry> CourseNotesDatabase = new ConcurrentHashMap<>();
 
-    @GetMapping({"", "/"})
+    @GetMapping({ "", "/" })
     public String index(ModelMap model) {
         model.addAttribute("CourseNotesDatabase", CourseNotesDatabase);
         return "Course";
@@ -107,7 +105,7 @@ public class CourseController {
 
     @GetMapping("/view/{courseId}")
     public String view(@PathVariable("courseId") long courseId,
-                       ModelMap model) {
+            ModelMap model) {
         CourseEntry course = this.CourseNotesDatabase.get(courseId);
         if (course == null) {
             return "redirect:/Course";
@@ -122,22 +120,17 @@ public class CourseController {
                     .orElse(null);
         } catch (Exception e) {
         }
-
         model.addAttribute("courseId", courseId);
         model.addAttribute("course", course);
         model.addAttribute("coursecomments", cceRep.findAll());
-        model.addAttribute("currentUser", currentUser); // Add 
-        model.addAttribute("currentUsername", currentUsername); // Add usernam
-
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("currentUsername", currentUsername);
         return "CourseInfo";
     }
 
-
-
-
     @GetMapping("/{courseId}/attachment/{attachment:.+}")
     public View download(@PathVariable("courseId") long courseId,
-                         @PathVariable("attachment") String AttachmentId) {
+            @PathVariable("attachment") String AttachmentId) {
         CourseEntry course = this.CourseNotesDatabase.get(courseId);
         if (course != null) {
             Attachment attachment = course.getAttachment(AttachmentId);
@@ -166,8 +159,8 @@ public class CourseController {
 
     @PostMapping("/view/edit/{courseId}")
     public String handleEditSubmit(@PathVariable("courseId") long courseId,
-                                   @ModelAttribute("courseForm") Form form,
-                                   ModelMap model) throws IOException {
+            @ModelAttribute("courseForm") Form form,
+            ModelMap model) throws IOException {
         CourseEntry course = this.CourseNotesDatabase.get(courseId);
         if (course == null) {
             return "redirect:/Course";

@@ -86,7 +86,7 @@ public class PollController {
 
         PollForm pollForm = new PollForm();
         pollForm.setQuestion(poll.getQuestion());
-        pollForm.setOptions(poll.getOptions()); // Make sure getOptions() returns List<String>
+        pollForm.setOptions(poll.getOptions());
 
         model.addAttribute("pollForm", pollForm);
         model.addAttribute("pollId", entryId);

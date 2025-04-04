@@ -63,7 +63,6 @@
 <body>
 <div class="container">
     <h1>Poll List</h1>
-
     <c:choose>
         <c:when test="${empty polles || fn:length(polles) == 0}">
             <p>There is no Poll yet.</p>
@@ -96,8 +95,6 @@
     <div class="back-index">
         <p><a href="<c:url value='/index' />">Back</a></p>
     </div>
-
-
 </div>
 </body>
 </html>
