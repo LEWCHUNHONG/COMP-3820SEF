@@ -112,12 +112,8 @@ public class CourseController {
         if (course == null) {
             return "redirect:/Course";
         }
-
-        // Get current authenticated username
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = auth.getName();
-
-        // Get full user details from your UserManagementService
         CommentUser currentUser = null;
         try {
             currentUser = userManagementService.getCommentUsers().stream()
@@ -125,14 +121,13 @@ public class CourseController {
                     .findFirst()
                     .orElse(null);
         } catch (Exception e) {
-            // Handle case when user not found
         }
 
         model.addAttribute("courseId", courseId);
         model.addAttribute("course", course);
         model.addAttribute("coursecomments", cceRep.findAll());
-        model.addAttribute("currentUser", currentUser); // Add current user object
-        model.addAttribute("currentUsername", currentUsername); // Add username as well
+        model.addAttribute("currentUser", currentUser); // Add 
+        model.addAttribute("currentUsername", currentUsername); // Add usernam
 
         return "CourseInfo";
     }
