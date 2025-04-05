@@ -43,6 +43,7 @@ dependencies {
     implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
     implementation 'jakarta.el:jakarta.el-api'
     implementation 'org.apache.commons:commons-lang3'
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
 
 }
